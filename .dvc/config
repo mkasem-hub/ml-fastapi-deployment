@@ -1,0 +1,7 @@
+[core]
+    remote = storage
+['remote "storage"']
+    url = s3://ml-api-project-mostafa
+    access_key_id = AKIA5LJCFDHQBIJDLIEP
+    secret_access_key = 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
+    region = us-east-1
