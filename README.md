@@ -1,43 +1,161 @@
-Working in a command line environment is recommended for ease of use with git and dvc. If on Windows, WSL1 or 2 is recommended.
+# 🛠️ ML Model Deployment with FastAPI (Course 4 Project)
 
-# Environment Set up
-* Download and install conda if you don’t have it already.
-    * Use the supplied requirements file to create a new environment, or
-    * conda create -n [envname] "python=3.8" scikit-learn pandas numpy pytest jupyter jupyterlab fastapi uvicorn -c conda-forge
-    * Install git either through conda (“conda install git”) or through your CLI, e.g. sudo apt-get git.
+This repository contains the final project for the **Udacity Machine Learning DevOps Engineer Nanodegree**, which demonstrates deploying a classification model using **FastAPI**, **GitHub Actions**, **DVC**, and **Render**.
 
-## Repositories
-* Create a directory for the project and initialize git.
-    * As you work on the code, continually commit changes. Trained models you want to use in production must be committed to GitHub.
-* Connect your local git repo to GitHub.
-* Setup GitHub Actions on your repo. You can use one of the pre-made GitHub Actions if at a minimum it runs pytest and flake8 on push and requires both to pass without error.
-    * Make sure you set up the GitHub Action to have the same version of Python as you used in development.
+---
 
-# Data
-* Download census.csv and commit it to dvc.
-* This data is messy, try to open it in pandas and see what you get.
-* To clean it, use your favorite text editor to remove all spaces.
+## 🔍 Project Overview
 
-# Model
-* Using the starter code, write a machine learning model that trains on the clean data and saves the model. Complete any function that has been started.
-* Write unit tests for at least 3 functions in the model code.
-* Write a function that outputs the performance of the model on slices of the data.
-    * Suggestion: for simplicity, the function can just output the performance on slices of just the categorical features.
-* Write a model card using the provided template.
+The project includes:
+- Training and saving an ML model
+- Creating API endpoints for inference
+- Automating testing and deployment
+- Deploying the service publicly via Render
 
-# API Creation
-*  Create a RESTful API using FastAPI this must implement:
-    * GET on the root giving a welcome message.
-    * POST that does model inference.
-    * Type hinting must be used.
-    * Use a Pydantic model to ingest the body from POST. This model should contain an example.
-   	 * Hint: the data has names with hyphens and Python does not allow those as variable names. Do not modify the column names in the csv and instead use the functionality of FastAPI/Pydantic/etc to deal with this.
-* Write 3 unit tests to test the API (one for the GET and two for POST, one that tests each prediction).
+---
 
-# API Deployment
-* Create a free Heroku account (for the next steps you can either use the web GUI or download the Heroku CLI).
-* Create a new app and have it deployed from your GitHub repository.
-    * Enable automatic deployments that only deploy if your continuous integration passes.
-    * Hint: think about how paths will differ in your local environment vs. on Heroku.
-    * Hint: development in Python is fast! But how fast you can iterate slows down if you rely on your CI/CD to fail before fixing an issue. I like to run flake8 locally before I commit changes.
-* Write a script that uses the requests module to do one POST on your live API.
+## 📁 Environment Setup
+
+To set up the development environment:
+
+```bash
+conda create -n ml-api-env python=3.8 scikit-learn pandas numpy pytest jupyterlab fastapi uvicorn -c conda-forge
+conda activate ml-api-env
+pip install -r requirements.txt  # optional
+```
+
+Install Git and DVC:
+```bash
+sudo apt install git
+pip install dvc
+```
+
+If using Windows, WSL is recommended.
+
+---
+
+## 📊 Data Handling
+
+- Download `census.csv` and commit it to DVC:
+```bash
+dvc add data/census.csv
+git add data/census.csv.dvc .gitignore
+git commit -m "Track census dataset with DVC"
+```
+
+- Clean data using Pandas (strip extra spaces from features and column names).
+- Save cleaned version as `census_clean.csv`.
+
+---
+
+## 🤖 Model Training
+
+- Implemented a `RandomForestClassifier` with preprocessing using OneHotEncoder.
+- Wrote reusable `train_model`, `inference`, and `process_data` functions.
+- Wrote performance evaluation for **data slices** (e.g., by `education`, `sex`, etc.).
+- Wrote 3+ unit tests for model pipeline.
+- Included a model card documenting model assumptions and limitations.
+
+---
+
+## 🚀 API with FastAPI
+
+### Endpoints:
+- `GET /` → Returns welcome message.
+- `POST /inference` → Accepts JSON input and returns prediction (`<=50K` or `>50K`).
+
+### Input model:
+Used `Pydantic` with an example schema. Handles features with hyphens using FastAPI aliasing.
+
+---
+
+## ✅ API Testing
+
+- Test script: `test_live_api.py`  
+- Tests cover:
+  - `GET /` root
+  - `POST /inference` with valid input (positive test)
+  - `POST /inference` with edge cases or invalid input (negative test)
+
+Run:
+```bash
+python test_live_api.py
+```
+
+---
+
+## 🔁 CI/CD with GitHub Actions
+
+- `.github/workflows/main.yml` includes:
+  - `pytest` for unit testing
+  - `flake8` for linting
+- CI passes required before deployment
+- GitHub repo connected to Render for auto-deployment on push
+
+---
+
+## 🌐 Deployment on Render
+
+**Live URL**:  
+[https://ml-fastapi-deployment-xxxxx.onrender.com](https://ml-fastapi-deployment-xxxxx.onrender.com)
+
+Deployment uses:
+- `render.yaml`
+- `runtime.txt`
+- `gunicorn` + `uvicorn`
+
+---
+
+## 🧪 Model Inference Example (Live)
+
+```python
+import requests
+
+data = {
+    "age": 37,
+    "workclass": "Private",
+    "fnlwgt": 284582,
+    "education": "HS-grad",
+    "education_num": 9,
+    "marital_status": "Married-civ-spouse",
+    "occupation": "Craft-repair",
+    "relationship": "Husband",
+    "race": "White",
+    "sex": "Male",
+    "capital_gain": 0,
+    "capital_loss": 0,
+    "hours_per_week": 40,
+    "native_country": "United-States"
+}
+
+response = requests.post("https://ml-fastapi-deployment-xxxxx.onrender.com/inference", json=data)
+print(response.status_code)
+print(response.json())
+```
+
+---
+
+## 📄 Files Included
+
+- `starter/main.py` – FastAPI app
+- `starter/ml/` – Model training and preprocessing code
+- `starter/model/` – Saved `model.pkl`, `encoder.pkl`, `lb.pkl`
+- `requirements.txt`, `runtime.txt`, `render.yaml`
+- `.github/workflows/main.yml` – GitHub Actions config
+- `test_live_api.py` – API test script
+- `README.md` – this documentation
+
+---
+
+## 📌 Notes
+
+- Python version: `3.8` (set in `runtime.txt`)
+- scikit-learn version: `1.3.2` (must match for `joblib` compatibility)
+- API hosted on Render instead of Heroku (Heroku billing required)
+
+---
+
+## 👤 Author
+
+**Mostafa Kasem**  
+GitHub: [@mkasem-hub](https://github.com/mkasem-hub)
