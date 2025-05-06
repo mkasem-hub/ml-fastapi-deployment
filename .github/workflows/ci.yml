@@ -1,0 +1,47 @@
+name: FastAPI CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r starter/requirements.txt
+        pip install flake8 pytest
+
+    - name: Lint with flake8
+      run: |
+        flake8 starter
+
+    - name: Run tests with pytest
+      run: |
+        pytest
+
+    # Optional: If you're using AWS and DVC
+    - name: Configure AWS credentials
+      if: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: DVC pull
+      if: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      run: dvc pull
