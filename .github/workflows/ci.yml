@@ -24,12 +24,11 @@ jobs:
 
       - name: Install dependencies
         run: |
-        echo "==> Current directory contents:"
-        ls -R
-        echo "==> Installing from starter/requirements.txt"
-        pip install -r starter/requirements.txt
-        pip install flake8 pytest
-
+          echo "==> Current directory contents:"
+          ls -R
+          echo "==> Installing from starter/requirements.txt"
+          pip install -r starter/requirements.txt
+          pip install flake8 pytest
 
       - name: Lint with flake8
         run: flake8 starter
