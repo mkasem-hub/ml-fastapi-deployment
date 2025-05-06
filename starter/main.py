@@ -4,8 +4,8 @@ import pandas as pd
 from fastapi import FastAPI
 from pydantic import BaseModel
 
-from ml.data import process_data
-from ml.model import inference
+from starter.ml.data import process_data
+from starter.ml.model import inference
 
 # Load model and encoders
 model_path = os.path.join("model", "model.pkl")
