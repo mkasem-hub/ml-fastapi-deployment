@@ -19,11 +19,14 @@ lb = joblib.load(lb_path)
 # Initialize app
 app = FastAPI()
 
+
 @app.get("/")
 def read_root():
     return {"message": "API is working!"}
 
 # Define the input data model
+
+
 class CensusData(BaseModel):
     age: int
     workclass: str
@@ -41,6 +44,8 @@ class CensusData(BaseModel):
     native_country: str
 
 # Inference endpoint
+
+
 @app.post("/inference")
 def run_inference(data: CensusData):
     input_df = pd.DataFrame([data.dict()])
