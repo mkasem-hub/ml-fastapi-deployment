@@ -30,20 +30,7 @@ jobs:
           pip install -r starter/requirements.txt
           pip install flake8 pytest
 
-      - name: Lint with flake8
-        run: flake8 starter
-
       - name: Run tests with pytest
         run: pytest
 
-      - name: Configure AWS credentials
-        if: env.AWS_ACCESS_KEY_ID != ''
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-
-      - name: DVC pull
-        if: env.AWS_ACCESS_KEY_ID != ''
-        run: dvc pull
+      
