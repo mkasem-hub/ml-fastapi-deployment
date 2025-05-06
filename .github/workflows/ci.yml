@@ -22,9 +22,11 @@ jobs:
         with:
           python-version: '3.11'
 
-     - name: Install dependencies
+      - name: Install dependencies
         run: |
-        python -m pip install --upgrade pip
+        echo "==> Current directory contents:"
+        ls -R
+        echo "==> Installing from starter/requirements.txt"
         pip install -r starter/requirements.txt
         pip install flake8 pytest
 
