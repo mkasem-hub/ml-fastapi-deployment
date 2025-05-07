@@ -68,3 +68,4 @@ def run_inference(data: CensusData):
     label = lb.inverse_transform(pred)[0]
 
     return {"prediction": label}
+app = FastAPI()
