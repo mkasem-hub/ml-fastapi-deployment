@@ -8,9 +8,10 @@ from starter.ml.data import process_data
 from starter.ml.model import inference
 
 # Load model and encoders
-model_path = os.path.join("model", "model.pkl")
-encoder_path = os.path.join("model", "encoder.pkl")
-lb_path = os.path.join("model", "lb.pkl")
+BASE_DIR = os.path.dirname(__file__)
+model_path = os.path.join(BASE_DIR, "model", "model.pkl")
+encoder_path = os.path.join(BASE_DIR, "model", "encoder.pkl")
+lb_path = os.path.join(BASE_DIR, "model", "lb.pkl")
 
 model = joblib.load(model_path)
 encoder = joblib.load(encoder_path)
