@@ -4,8 +4,8 @@ import pandas as pd
 from fastapi import FastAPI
 from pydantic import BaseModel
 
-from starter.ml.data import process_data
-from starter.ml.model import inference
+from ml.data import process_data
+from ml.model import inference
 
 # Load model and encoders
 BASE_DIR = os.path.dirname(__file__)
@@ -20,13 +20,9 @@ lb = joblib.load(lb_path)
 # Initialize app
 app = FastAPI()
 
-
 @app.get("/")
 def read_root():
     return {"message": "API is working!"}
-
-# Define the input data model
-
 
 class CensusData(BaseModel):
     age: int
@@ -43,9 +39,6 @@ class CensusData(BaseModel):
     capital_loss: int
     hours_per_week: int
     native_country: str
-
-# Inference endpoint
-
 
 @app.post("/inference")
 def run_inference(data: CensusData):
@@ -68,4 +61,3 @@ def run_inference(data: CensusData):
     label = lb.inverse_transform(pred)[0]
 
     return {"prediction": label}
-app = FastAPI()
